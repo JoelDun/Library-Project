@@ -14,8 +14,12 @@
   </div>
 
   <button id="new-book-button">NEW BOOK</button>
-  <form id="new-book-form">
-    <!-- #Form fields go here -->
+  <form id="new-book-form" class ="hidden">
+    <input type="text" id="title" placeholder="Title" required>
+    <input type="text" id="author" placeholder="Author" required>
+    <input type="number" id="pages" placeholder="Number of Pages" required>
+    <label for="read">Have you read this book?</label>
+    <input type="checkbox" id="read">
     <button type="submit">Add Book</button>
   </form>
 <script src="script.js"></script>
