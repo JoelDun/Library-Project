@@ -28,7 +28,7 @@ function displayBooks() {
     // Create a "Remove" button for each book
     const removeButton = document.createElement('button');
     removeButton.textContent = 'Remove';
-    removeButton.addEventListener('click', () => {
+    removeButton.addEventListener('click', () => {gi
         const bookIndex = myLibrary.indexOf(book)
 
         if (bookIndex !== -1) {
@@ -38,8 +38,19 @@ function displayBooks() {
         displayBooks();
     });
     
+    // Create a "Toggle Read Status" button for each book
+    const toggleReadButton = document.createElement('button');
+    toggleReadButton.textContent = 'Toggle Read Status';
+    toggleReadButton.addEventListener('click', () => {
+       book.toggleReadStatus();
+   
+       // Update the displayed book list
+       displayBooks();
+   });
+    
     bookInfo.appendChild(removeButton);
-
+    bookInfo.appendChild(toggleReadButton);
+    
     bookList.appendChild(bookInfo);
   })
 }
