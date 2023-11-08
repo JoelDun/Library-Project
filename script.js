@@ -24,9 +24,51 @@ function displayBooks() {
   myLibrary.forEach((book, index) => {
     const bookInfo = document.createElement('div');
     bookInfo.textContent = `Title: ${book.title}, Author: ${book.author}, Pages: ${book.pages}, Read: ${book.read ? 'Yes' : 'No'}`;
+
+    // Create a "Remove" button for each book
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.addEventListener('click', () => {
+        const bookIndex = myLibrary.indexOf(book)
+
+        if (bookIndex !== -1) {
+          myLibrary.splice(bookIndex, 1);
+        }
+
+        displayBooks();
+    });
+    
+    bookInfo.appendChild(removeButton);
+
     bookList.appendChild(bookInfo);
   })
 }
 
 //Call the displayBooks to initially show the books
 displayBooks()
+
+
+const newBookForm = document.getElementById('new-book-form');
+
+newBookForm.addEventListener('submit', function(event){
+  event.preventDefault();
+
+    // Get form input values
+    const title = document.getElementById('title').value;
+    const author = document.getElementById('author').value;
+    const pages = document.getElementById('pages').value;
+    const read = document.getElementById('read').checked;
+
+    // Create a new Book object
+    const newBook = new Book(title, author, pages, read);
+
+      // Add the new book to myLibrary
+      myLibrary.push(newBook);
+
+      displayBooks();
+
+      newBookForm.reset();
+
+      newBookForm.classList.add('hidden'); 
+
+})
