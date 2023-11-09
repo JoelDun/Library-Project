@@ -83,3 +83,24 @@ newBookForm.addEventListener('submit', function(event){
       newBookForm.classList.add('hidden'); 
 
 })
+
+
+
+function saveLibraryToLocalStorage() {
+  localStorage.setItem('myLibrary', JSON.stringify(myLibrary))
+}
+
+
+function loadLibraryFromLocalStorage() {
+  const libraryData = localStorage.getItem('myLibrary');
+  if (libraryData) {
+    myLibrary.length = 0
+    myLibrary.push(...JSON.parse(libraryData));
+  }
+}
+
+
+window.onload = () => {
+  loadLibraryFromLocalStorage()
+  displayBooks();
+}
