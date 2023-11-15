@@ -1,101 +1,104 @@
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-}
+// Create an object to encapsulate the library functionality
+const libraryApp = {
+  // Library array
+  myLibrary: [],
 
-Book.prototype.toggleReadStatus = function() {
-  this.read = !this.read;
-};
+  // Book constructor
+  Book: function(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  },
 
-// Create Library Array
-const myLibrary = [];
-const book1 = new Book("The Hobbit", "JRR Tolkien", 500, true);
-myLibrary.push(book1);
+  // Toggle read status prototype method
+  toggleReadStatus: function(book) {
+    book.read = !book.read;
+  },
 
-// Function to display books
-function displayBooks() {
-  const bookList = document.getElementById('book-list');
-  bookList.innerHTML = ''; // Clear existing content
+  // Function to display books
+  displayBooks: function() {
+    const bookList = document.getElementById('book-list');
+    bookList.innerHTML = ''; // Clear existing content
 
-  myLibrary.forEach((book, index) => {
-    const bookInfo = document.createElement('div');
-    bookInfo.textContent = `Title: ${book.title}, Author: ${book.author}, Pages: ${book.pages}, Read: ${book.read ? 'Yes' : 'No'}`;
+    this.myLibrary.forEach((book, index) => {
+      const bookInfo = document.createElement('div');
+      bookInfo.textContent = `Title: ${book.title}, Author: ${book.author}, Pages: ${book.pages}, Read: ${book.read ? 'Yes' : 'No'}`;
 
-    // Create a "Remove" button for each book
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'Remove';
-    removeButton.addEventListener('click', () => {
-      const bookIndex = myLibrary.indexOf(book);
+      // Create a "Remove" button for each book
+      const removeButton = document.createElement('button');
+      removeButton.textContent = 'Remove';
+      removeButton.addEventListener('click', () => {
+        this.removeBook(book);
+        this.displayBooks();
+      });
 
-      if (bookIndex !== -1) {
-        myLibrary.splice(bookIndex, 1);
-        saveLibraryToLocalStorage(); // Save to local storage after removing
-        displayBooks();
-        console.log('Book removed. Library:', myLibrary);
-      }
+      // Create a "Toggle Read Status" button for each book
+      const toggleReadButton = document.createElement('button');
+      toggleReadButton.textContent = 'Toggle Read Status';
+      toggleReadButton.addEventListener('click', () => {
+        this.toggleReadStatus(book);
+        this.displayBooks();
+      });
+
+      bookInfo.appendChild(removeButton);
+      bookInfo.appendChild(toggleReadButton);
+
+      bookList.appendChild(bookInfo);
+    });
+  },
+
+  // Function to add a new book
+  addBook: function(title, author, pages, read) {
+    const newBook = new this.Book(title, author, pages, read);
+    this.myLibrary.push(newBook);
+    this.saveLibraryToLocalStorage();
+    this.displayBooks();
+  },
+
+  // Function to remove a book
+  removeBook: function(book) {
+    const bookIndex = this.myLibrary.indexOf(book);
+    if (bookIndex !== -1) {
+      this.myLibrary.splice(bookIndex, 1);
+      this.saveLibraryToLocalStorage();
+    }
+  },
+
+  // Function to save library to local storage
+  saveLibraryToLocalStorage: function() {
+    localStorage.setItem('myLibrary', JSON.stringify(this.myLibrary));
+  },
+
+  // Function to load library from local storage
+  loadLibraryFromLocalStorage: function() {
+    const libraryData = localStorage.getItem('myLibrary');
+    if (libraryData) {
+      this.myLibrary.length = 0;
+      this.myLibrary.push(...JSON.parse(libraryData));
+    }
+  },
+
+  // Initialization function
+  init: function() {
+    this.loadLibraryFromLocalStorage();
+    this.displayBooks();
+
+    const newBookForm = document.getElementById('new-book-form');
+    newBookForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const pages = document.getElementById('pages').value;
+      const read = document.getElementById('read').checked;
+      this.addBook(title, author, pages, read);
+      newBookForm.reset();
+      newBookForm.classList.add('hidden');
     });
 
-    // Create a "Toggle Read Status" button for each book
-    const toggleReadButton = document.createElement('button');
-    toggleReadButton.textContent = 'Toggle Read Status';
-    toggleReadButton.addEventListener('click', () => {
-      book.toggleReadStatus();
-      saveLibraryToLocalStorage(); // Save to local storage after toggling
-      displayBooks();
-      console.log('Read status toggled. Library:', myLibrary);
-    });
-
-    bookInfo.appendChild(removeButton);
-    bookInfo.appendChild(toggleReadButton);
-
-    bookList.appendChild(bookInfo);
-  });
-}
-
-// Call the displayBooks to initially show the books
-displayBooks();
-
-const newBookForm = document.getElementById('new-book-form');
-
-newBookForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  // Get form input values
-  const title = document.getElementById('title').value;
-  const author = document.getElementById('author').value;
-  const pages = document.getElementById('pages').value;
-  const read = document.getElementById('read').checked;
-
-  // Create a new Book object
-  const newBook = new Book(title, author, pages, read);
-
-  // Add the new book to myLibrary
-  myLibrary.push(newBook);
-
-  saveLibraryToLocalStorage(); // Save to local storage after adding
-  displayBooks();
-
-  newBookForm.reset();
-
-  newBookForm.classList.add('hidden');
-  console.log('New book added. Library:', myLibrary);
-});
-
-function saveLibraryToLocalStorage() {
-  localStorage.setItem('myLibrary', JSON.stringify(myLibrary));
-}
-
-function loadLibraryFromLocalStorage() {
-  const libraryData = localStorage.getItem('myLibrary');
-  if (libraryData) {
-    myLibrary.length = 0;
-    myLibrary.push(...JSON.parse(libraryData));
-  }
-}
-
-window.onload = () => {
-  loadLibraryFromLocalStorage();
-  displayBooks();
+    // Other initialization code can go here
+  },
 };
+
+// Call the initialization function
+libraryApp.init();
